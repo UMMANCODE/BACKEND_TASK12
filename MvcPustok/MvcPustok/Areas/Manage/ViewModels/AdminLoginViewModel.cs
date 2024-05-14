@@ -12,5 +12,6 @@ namespace MvcPustok.Areas.Manage.ViewModels {
 		[MaxLength(25)]
 		[DataType(DataType.Password)]
 		public string Password { get; set; }
+		public bool RememberMe { get; set; }
 	}
 }

@@ -1,5 +1,71 @@
 ﻿
 $(document).ready(function () {
+  $(".book-modal").click(function (e) {
+    e.preventDefault();
+    let url = this.getAttribute("href");
+
+    fetch(url)
+      .then(response => response.text())
+      .then(data => {
+        $("#quickModal .modal-dialog").html(data)
+      })
+
+    $("#quickModal").modal('show');
+  })
+
+  $("#load-mode-btn").click(function (e) {
+    e.preventDefault();
+    const reviewBoxesCount = document.querySelectorAll(".review-comment").length;
+    let url = window.location.href;
+    url = url.replace("detail", "loadmore");
+    url += `?skip=${reviewBoxesCount}`;
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        const total = data.reviewCount;
+        const reviews = data.reviews;
+
+        reviews.forEach(review => {
+          const reviewBox = `
+          <div class="review-comment mb--20">
+            <div class="text">
+              <div class="rating-block mb--15">
+                ${generateStars(review.rate)}
+              </div>
+              <h6 class="author">
+                ${review.fullName} – <span class="font-weight-400">${formatDate(review.createdAt)}</span>
+              </h6>
+              <p>
+                ${review.text}
+              </p>
+            </div>
+          </div>`;
+          const reviewContainer = document.querySelector(".review-container");
+          reviewContainer.innerHTML += reviewBox;
+        });
+        if (total <= reviewBoxesCount + reviews.length) {
+          document.querySelector("#load-mode-btn").style.display = "none";
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  });
+
+  function generateStars(rate) {
+    let starsHTML = '';
+    for (let i = 1; i <= 5; i++) {
+      starsHTML += `<span class="ion-android-star-outline ${i <= rate ? 'star_on' : ''}"></span>`;
+    }
+    return starsHTML;
+  }
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+
   $(".imgInput").change(function (e) {
     let box = $(this).parent().find(".preview-box");
     $(box).find(".previewImg").remove();

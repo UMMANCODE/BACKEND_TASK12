@@ -8,7 +8,7 @@ using MvcPustok.Models;
 
 namespace MvcPustok.Areas.Manage.Controllers {
 	[Area("manage")]
-	[Authorize]
+	[Authorize(Roles = "admin, super_admin")]
 	public class AuthorController : Controller {
 		private readonly AppDbContext _context;
 
@@ -27,6 +27,7 @@ namespace MvcPustok.Areas.Manage.Controllers {
 			return View();
 		}
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public IActionResult Create(Author author) {
 			if (!ModelState.IsValid) {
 				return View(author);
@@ -50,6 +51,7 @@ namespace MvcPustok.Areas.Manage.Controllers {
 			return View(Author);
 		}
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public IActionResult Edit(Author Author) {
 			if (!ModelState.IsValid) {
 				return View(Author);
@@ -78,7 +80,7 @@ namespace MvcPustok.Areas.Manage.Controllers {
 
 			_context.SaveChanges();
 
-			return RedirectToAction("Index");
+			return RedirectToAction("index");
 		}
 	}
 }

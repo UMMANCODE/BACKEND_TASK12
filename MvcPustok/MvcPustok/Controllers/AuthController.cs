@@ -1,24 +1,21 @@
 ﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using MvcPustok.Data;
 using MvcPustok.Models;
 using MvcPustok.ViewModels;
 
 namespace MvcPustok.Controllers {
 	public class AuthController : Controller {
-		private readonly AppDbContext _context;
 		private readonly UserManager<AppUser> _userManager;
 		private readonly SignInManager<AppUser> _signInManager;
 
-		public AuthController(AppDbContext context, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager) {
-			_context = context;
+		public AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager) {
 			_userManager = userManager;
 			_signInManager = signInManager;
 		}
 
+		[Authorize(Roles = "member")]
 		public IActionResult Logout() {
 			_signInManager.SignOutAsync();
 			return RedirectToAction("index", "home");
@@ -29,18 +26,25 @@ namespace MvcPustok.Controllers {
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Login(MemberLoginViewModel loginVM, string returnUrl) {
-			AppUser member = await _userManager.FindByNameAsync(loginVM.UserName);
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Login(MemberLoginViewModel loginVM, string? returnUrl) {
+			if ((!ModelState.IsValid)) return View();
 
-			if (member == null) {
-				ModelState.AddModelError("", "UserName or Password incorrect");
+			AppUser? member = await _userManager.FindByEmailAsync(loginVM.UserName);
+
+			if (member == null || !await _userManager.IsInRoleAsync(member, "member")) {
+				ModelState.AddModelError("", "Invalid UserName or Password!");
 				return View();
 			}
 
-			var result = await _signInManager.PasswordSignInAsync(member, loginVM.Password, false, false);
+			var result = await _signInManager.PasswordSignInAsync(member, loginVM.Password, false, true);
 
-			if (!result.Succeeded) {
-				ModelState.AddModelError("", "UserName or Password incorrect");
+			if (result.IsLockedOut) {
+				ModelState.AddModelError("", "You are locked out for 1 minute!");
+				return View();
+			}
+			else if (!result.Succeeded) {
+				ModelState.AddModelError("", "Invalid UserName or Password!");
 				return View();
 			}
 
@@ -55,16 +59,11 @@ namespace MvcPustok.Controllers {
 
 			var addClaimsResult = await _userManager.AddClaimsAsync(member, claims);
 			if (!addClaimsResult.Succeeded) {
-				ModelState.AddModelError("", "Claim could not be added");
+				ModelState.AddModelError("", "Claims could not be added");
 				return View();
 			}
 
-			if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl)) {
-				return Redirect(returnUrl);
-			}
-			else {
-				return RedirectToAction("profile", "member");
-			}
+			return returnUrl != null ? Redirect(returnUrl) : RedirectToAction("index", "home");
 		}
 
 		public IActionResult Register() {
@@ -72,6 +71,7 @@ namespace MvcPustok.Controllers {
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Register(MemberRegisterViewModel registerVM) {
 			if (!ModelState.IsValid) return View();
 
@@ -90,9 +90,11 @@ namespace MvcPustok.Controllers {
 				return View();
 			}
 
-			await _signInManager.SignInAsync(member, true);
+			await _userManager.AddToRoleAsync(member, "member");
 
-			return RedirectToAction("profile", "member");
+			await _signInManager.SignInAsync(member, false);
+
+			return RedirectToAction("index", "home");
 		}
 	}
 }

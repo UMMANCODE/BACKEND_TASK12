@@ -1,7 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MvcPustok.Areas.Manage.ViewModels;
 using MvcPustok.Data;
@@ -10,7 +7,7 @@ using MvcPustok.Models;
 
 namespace MvcPustok.Areas.Manage.Controllers {
 	[Area("manage")]
-	[Authorize]
+	[Authorize(Roles = "admin, super_admin")]
 	public class SliderController : Controller {
 		private readonly AppDbContext _context;
 		private readonly IWebHostEnvironment _env;
@@ -32,6 +29,7 @@ namespace MvcPustok.Areas.Manage.Controllers {
 			return View();
 		}
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public IActionResult Create(Slider slider) {
 			if (slider.ImageFile == null) ModelState.AddModelError("ImageFile", "ImageFile is required!");
 
@@ -52,6 +50,7 @@ namespace MvcPustok.Areas.Manage.Controllers {
 			return View(slider);
 		}
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public IActionResult Edit(Slider slider) {
 			if (!ModelState.IsValid) return View();
 

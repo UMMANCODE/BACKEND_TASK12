@@ -9,7 +9,7 @@ using MvcPustok.Models;
 
 namespace MvcPustok.Areas.Manage.Controllers {
 	[Area("manage")]
-	[Authorize]
+	[Authorize(Roles = "admin, super_admin")]
 	public class BookController : Controller {
 		private readonly AppDbContext _context;
 		private readonly IWebHostEnvironment _env;
@@ -33,6 +33,7 @@ namespace MvcPustok.Areas.Manage.Controllers {
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public IActionResult Create(Book book) {
 			if (book.PosterFile is null) ModelState.AddModelError("PosterFile", "PosterFile is required");
 			if (book.HoverFile is null) ModelState.AddModelError("HoverFile", "HoverFile is required");
@@ -99,6 +100,7 @@ namespace MvcPustok.Areas.Manage.Controllers {
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public IActionResult Edit(Book book) {
 			Book? existBook = _context.Books.Include(x => x.BookImages).Include(x => x.BookTags).FirstOrDefault(x => x.Id == book.Id);
 
@@ -193,7 +195,7 @@ namespace MvcPustok.Areas.Manage.Controllers {
 
 			_context.Books.Remove(book);
 			_context.SaveChanges();
-			return RedirectToAction("Index");
+			return RedirectToAction("index");
 		}
 	}
 }

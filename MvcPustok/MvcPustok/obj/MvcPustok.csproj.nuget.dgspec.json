@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\Desktop\\Code Academy\\BACKEND\\TASK10\\MvcPustok\\MvcPustok\\MvcPustok.csproj": {}
+    "C:\\Users\\user\\Desktop\\Code Academy\\BACKEND\\TASK12\\MvcPustok\\MvcPustok\\MvcPustok.csproj": {}
   },
   "projects": {
-    "C:\\Users\\user\\Desktop\\Code Academy\\BACKEND\\TASK10\\MvcPustok\\MvcPustok\\MvcPustok.csproj": {
+    "C:\\Users\\user\\Desktop\\Code Academy\\BACKEND\\TASK12\\MvcPustok\\MvcPustok\\MvcPustok.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\Desktop\\Code Academy\\BACKEND\\TASK10\\MvcPustok\\MvcPustok\\MvcPustok.csproj",
+        "projectUniqueName": "C:\\Users\\user\\Desktop\\Code Academy\\BACKEND\\TASK12\\MvcPustok\\MvcPustok\\MvcPustok.csproj",
         "projectName": "MvcPustok",
-        "projectPath": "C:\\Users\\user\\Desktop\\Code Academy\\BACKEND\\TASK10\\MvcPustok\\MvcPustok\\MvcPustok.csproj",
+        "projectPath": "C:\\Users\\user\\Desktop\\Code Academy\\BACKEND\\TASK12\\MvcPustok\\MvcPustok\\MvcPustok.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\Desktop\\Code Academy\\BACKEND\\TASK10\\MvcPustok\\MvcPustok\\obj\\",
+        "outputPath": "C:\\Users\\user\\Desktop\\Code Academy\\BACKEND\\TASK12\\MvcPustok\\MvcPustok\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",

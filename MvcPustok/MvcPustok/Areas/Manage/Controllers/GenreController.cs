@@ -9,7 +9,7 @@ using MvcPustok.Models;
 
 namespace MvcPustok.Areas.Manage.Controllers {
 	[Area("manage")]
-	[Authorize]
+	[Authorize(Roles = "admin, super_admin")]
 	public class GenreController : Controller {
 		private readonly AppDbContext _context;
 
@@ -29,6 +29,7 @@ namespace MvcPustok.Areas.Manage.Controllers {
 			return View();
 		}
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public IActionResult Create(Genre genre) {
 			if (!ModelState.IsValid) {
 				return View(genre);
@@ -52,6 +53,7 @@ namespace MvcPustok.Areas.Manage.Controllers {
 			return View(genre);
 		}
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public IActionResult Edit(Genre genre) {
 			if (!ModelState.IsValid) {
 				return View(genre);
@@ -80,7 +82,7 @@ namespace MvcPustok.Areas.Manage.Controllers {
 
 			_context.SaveChanges();
 
-			return RedirectToAction("Index");
+			return RedirectToAction("index");
 		}
 	}
 }
